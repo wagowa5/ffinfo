@@ -1,0 +1,42 @@
+name: PR Review Workflow
+on: issue_comment
+
+jobs:
+  pr_review:
+    name: PR review
+    if: contains(github.event.comment.html_url, '/pull/') && startsWith(github.event.comment.body, '/review')
+    # if: ${{ github.event.issue.pull_request }} && github.event.comment.body == '/review'
+    runs-on: ubuntu-latest
+    # ActionsからPRへのコメントを許可
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: |
+          pip install openai
+          pip install PyGithub
+      - name: Run script
+        run: python scripts/code_review_script.py
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          REPOSITORY: "wagowa5/chococalc-front"
+          PR_NUMBER: ${{ github.event.issue.number }}
+
+  issue_commented:
+    # This job only runs for issue comments
+    name: Issue comment
+    if: ${{ !github.event.issue.pull_request }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo A comment on issue $NUMBER
+        env:
+          NUMBER: ${{ github.event.issue.number }}
+          
