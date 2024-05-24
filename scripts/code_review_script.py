@@ -23,9 +23,9 @@ def get_pr_diff():
 # Open AI APIでコードレビューを行い結果をjsonで返却する
 def get_openai_review(prompt):
     client = OpenAI(api_key=OPENAI_API_KEY)
-    # レスポンスをjson、modelにGPT-4 Turboを指定
+    # レスポンスをjson、modelにGPT-4oを指定
     chat_completion = client.chat.completions.create(
-        model="gpt-4-0125-preview",
+        model="gpt-4o-2024-05-13",
         messages=[
             {
                 "role": "system",
